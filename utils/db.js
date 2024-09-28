@@ -1,5 +1,6 @@
 #!/usr/bin/node
 import MongoClient from 'mongodb';
+
 const DB_HOST = process.env.DB_HOST || 'localhost';
 const DB_PORT = process.env.DB_PORT || 27017;
 const DB_DATABASE = process.env.DB_DATABASE || 'files_manager';
@@ -19,12 +20,15 @@ class DBClient {
 			}
 		});
 	}
+
 	isAlive() {
 		return Boolean(this.db);
 	}
+
 	async nbUsers() {
 		return this.usersCollection.countDocuments();
 	}
+
 	async nbFiles() {
 		return this.filesCollection.countDocuments();
 	}
