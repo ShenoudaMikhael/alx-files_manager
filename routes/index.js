@@ -1,7 +1,7 @@
 #!/usr/bin/node
 import { Router } from 'express';
-import AppController from '../controllers/AppController.js';
-import UsersController from '../controllers/UsersController.js';
+import AppController from '../controllers/AppController';
+import UsersController from '../controllers/UsersController';
 
 const router = Router();
 
