@@ -4,7 +4,7 @@ import dbClient from '../utils/db';
 
 class UsersController {
   static async postNew(req, res) {
-    const { email, password } = req.body;
+    const { email, password } = req.body ? req.body : { email: null, password: null };
     if (!email) {
       return res.status(400).send({ error: 'Missing email' });
     }
