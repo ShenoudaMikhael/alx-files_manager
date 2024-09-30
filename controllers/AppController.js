@@ -1,4 +1,3 @@
-#!/usr/bin/node
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/no-named-as-default */
 import redisClient from '../utils/redis';
@@ -19,5 +18,4 @@ class AppController {
   }
 }
 
-export default AppController;
 module.exports = AppController;
