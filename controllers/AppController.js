@@ -1,9 +1,9 @@
 #!/usr/bin/node
+/* eslint-disable no-unused-vars */
 import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
 
 class AppController {
-  /** */
   static getStatus(req, res) {
     res.status(200).json({
       redis: redisClient.isAlive(),
