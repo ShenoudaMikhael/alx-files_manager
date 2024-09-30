@@ -99,4 +99,4 @@ class FilesController {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 }
-module.exports = FilesController;
+export default FilesController;
