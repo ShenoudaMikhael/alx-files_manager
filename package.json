@@ -11,7 +11,6 @@
         "dev": "nodemon --exec babel-node --presets @babel/preset-env",
         "test": "./node_modules/.bin/mocha --require @babel/register --exit"
     },
-    "type": "module",
     "author": "",
     "license": "ISC",
     "dependencies": {

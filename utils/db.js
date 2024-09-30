@@ -7,7 +7,7 @@ class DBClient {
     const DB_PORT = process.env.DB_PORT || 27017;
     const DB_DATABASE = process.env.DB_DATABASE || 'files_manager';
     const url = `mongodb://${DB_HOST}:${DB_PORT}`;
-    MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
+    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
       if (!err) {
         // console.log('Connected successfully to server');
         this.db = client.db(DB_DATABASE);
@@ -35,3 +35,4 @@ class DBClient {
 
 const dbClient = new DBClient();
 export default dbClient;
+module.exports = dbClient;

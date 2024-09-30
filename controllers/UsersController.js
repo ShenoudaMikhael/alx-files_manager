@@ -1,8 +1,8 @@
 #!/usr/bin/node
-import sha1 from 'sha1';
-import { ObjectId } from 'mongodb';
-import dbClient from '../utils/db';
-import redisClient from '../utils/redis';
+const sha1 = require('sha1');
+const { ObjectId } = require('mongodb');
+const dbClient = require('../utils/db');
+const redisClient = require('../utils/redis');
 
 class UsersController {
   static async postNew(req, res) {
@@ -35,8 +35,7 @@ class UsersController {
       if (!userID) {
         response.status(401).json({ error: 'Unauthorized' });
       }
-      const user = await dbClient.getUser({ _id: ObjectId(userID) });
-
+      const user = await (await dbClient.usersCollection).findOne({ _id: ObjectId(userID) });
       response.json({ id: user._id, email: user.email });
     } catch (error) {
       console.log(error);
@@ -46,3 +45,4 @@ class UsersController {
 }
 
 export default UsersController;
+module.exports = UsersController;
