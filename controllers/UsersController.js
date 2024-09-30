@@ -3,7 +3,7 @@ import sha1 from 'sha1';
 import dbClient from '../utils/db';
 
 class UsersController {
-  static postNew(req, res) {
+  static async postNew(req, res) {
     const { email, password } = req.body;
     if (!email) {
       res.status(400).send({ error: 'Missing email' });
@@ -15,7 +15,7 @@ class UsersController {
     if (dbUser) {
       res.status(400).send({ error: 'Already exist' });
     }
-    const newUser = dbClient.usersCollection.insert({ email, password: sha1(password) });
+    const newUser = await dbClient.usersCollection.insert({ email, password: sha1(password) });
     res.status(201).json({
       email: newUser.email, id: newUser.id,
     });
