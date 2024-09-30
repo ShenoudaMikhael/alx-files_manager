@@ -1,3 +1,4 @@
+#!/usr/bin/node
 import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
 
