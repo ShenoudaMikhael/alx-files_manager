@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
 
-class AppController {
+class AuthController {
   static async getConnect(req, res) {
     const authHeader = req.headers.authorization || '';
     const base64Credentials = authHeader.split(' ')[1] || '';
@@ -43,4 +43,4 @@ class AppController {
   }
 }
 
-export default AppController;
+export default AuthController;
