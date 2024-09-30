@@ -1,6 +1,6 @@
 #!/usr/bin/node
 import sha1 from 'sha1';
-import dbClient from '../utils/db';
+import dbClient from '../utils/db.js';
 
 class UsersController {
   static async postNew(req, res) {
@@ -12,7 +12,7 @@ class UsersController {
       return res.status(400).json({ error: 'Missing password' });
     }
     const dbUser = await (
-      await dbClient.usersCollection).find({ email });
+      await dbClient.usersCollection).findOne({ email });
     if (dbUser) {
       return res.status(400).json({ error: 'Already exist' });
     }
