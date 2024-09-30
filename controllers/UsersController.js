@@ -1,4 +1,6 @@
 #!/usr/bin/node
+/* eslint-disable no-unused-vars */
+/* eslint-disable import/no-named-as-default */
 const sha1 = require('sha1');
 const { ObjectId } = require('mongodb');
 const dbClient = require('../utils/db');
