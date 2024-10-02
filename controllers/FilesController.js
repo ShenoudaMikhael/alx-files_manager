@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import mime from 'mime-types';
+import Queue from 'bull';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
@@ -79,6 +80,11 @@ class FilesController {
 
     fileInsertData.localPath = filePath;
     await (await dbClient.filesCollection).insertOne(fileInsertData);
+    const thumbQeue = new Queue('thumbQeue');
+    thumbQeue.add({
+      userId: fileInsertData.userId,
+      fileId: fileInsertData._id,
+    });
 
     return res.status(201).send({
       id: fileInsertData._id,
