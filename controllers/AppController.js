@@ -2,11 +2,11 @@ import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
 
 class AppController {
-  static async getStatus(_req, res) {
+  static getStatus(_req, res) {
     try {
-      const redisStatus = redisClient.isAlive();
-      const dbStatus = dbClient.isAlive();
-      return res.status(200).json({ redis: redisStatus, db: dbStatus });
+      const redis = redisClient.isAlive();
+      const db = dbClient.isAlive();
+      return res.status(200).json({ redis, db });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: 'Server Error' });
@@ -15,9 +15,9 @@ class AppController {
 
   static async getStats(_req, res) {
     try {
-      const usersCount = await dbClient.nbUsers();
-      const filesCount = await dbClient.nbFiles();
-      return res.status(200).json({ users: usersCount, files: filesCount });
+      const users = await dbClient.nbUsers();
+      const files = await dbClient.nbFiles();
+      return res.status(200).json({ users, files });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: 'Server Error' });
