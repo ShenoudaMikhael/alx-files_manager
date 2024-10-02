@@ -9,7 +9,7 @@ class AppController {
       return res.status(200).json({ redis: redisStatus, db: dbStatus });
     } catch (error) {
       console.log(error);
-      return res.status(200).json({ error: 'Server Error' });
+      return res.status(500).json({ error: 'Server Error' });
     }
   }
 
@@ -20,7 +20,7 @@ class AppController {
       return res.status(200).json({ users: usersCount, files: filesCount });
     } catch (error) {
       console.log(error);
-      return res.status(200).json({ error: 'Server Error' });
+      return res.status(500).json({ error: 'Server Error' });
     }
   }
 }
