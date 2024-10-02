@@ -1,8 +1,10 @@
 import { ObjectId } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
+import { contentType } from 'mime-types';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
+
 
 class FilesController {
   static async postUpload(req, res) {
@@ -188,8 +190,8 @@ class FilesController {
 
     await (
       await dbClient.filesCollection).updateOne(
-      { _id: ObjectId(fileId) }, { $set: { isPublic: true } },
-    );
+        { _id: ObjectId(fileId) }, { $set: { isPublic: true } },
+      );
     file = await (
       await dbClient.filesCollection).findOne({ _id: ObjectId(fileId), userId: user._id });
 
@@ -226,8 +228,8 @@ class FilesController {
 
     await (
       await dbClient.filesCollection).updateOne(
-      { _id: ObjectId(fileId) }, { $set: { isPublic: false } },
-    );
+        { _id: ObjectId(fileId) }, { $set: { isPublic: false } },
+      );
     file = await (
       await dbClient.filesCollection).findOne({ _id: ObjectId(fileId), userId: user._id });
 
@@ -271,6 +273,7 @@ class FilesController {
     if (!fs.existsSync(file.localPath)) {
       return res.status(404).josn({ error: 'Not found' });
     }
+    res.setHeader('Content-Type', contentType(file.name) || 'text/plain; charset=utf-8');
     return res.status(200).sendFile(file.localPath);
   }
 }
