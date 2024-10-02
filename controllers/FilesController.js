@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
+import mime from 'mime-types';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
@@ -188,8 +189,8 @@ class FilesController {
 
     await (
       await dbClient.filesCollection).updateOne(
-      { _id: ObjectId(fileId) }, { $set: { isPublic: true } },
-    );
+        { _id: ObjectId(fileId) }, { $set: { isPublic: true } },
+      );
     file = await (
       await dbClient.filesCollection).findOne({ _id: ObjectId(fileId), userId: user._id });
 
@@ -226,8 +227,8 @@ class FilesController {
 
     await (
       await dbClient.filesCollection).updateOne(
-      { _id: ObjectId(fileId) }, { $set: { isPublic: false } },
-    );
+        { _id: ObjectId(fileId) }, { $set: { isPublic: false } },
+      );
     file = await (
       await dbClient.filesCollection).findOne({ _id: ObjectId(fileId), userId: user._id });
 
@@ -239,6 +240,47 @@ class FilesController {
       isPublic: file.isPublic,
       parentId: file.parentId,
     });
+  }
+
+  static async getFile(req, res) {
+    const userToken = req.header('X-Token');
+    if (!userToken) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const authKey = `auth_${userToken}`;
+    const userID = await redisClient.get(authKey);
+
+    if (!userID) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const user = await (await dbClient.usersCollection).findOne({ _id: ObjectId(userID) });
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const fileId = req.params.id || '';
+    const size = req.query.size || 0;
+
+    const file = await dbClient.files.findOne({ _id: ObjectId(fileId) });
+    if (!file) return res.status(404).send({ error: 'Not found' });
+
+    const { isPublic, userId, type } = file;
+
+    if ((!isPublic && !user) || (user && userId.toString() !== user && !isPublic)) {
+      return res.status(404).send({ error: 'Not found' });
+    }
+    if (type === 'folder') return res.status(400).send({ error: 'A folder doesn\'t have content' });
+
+    const path = size === 0 ? file.localPath : `${file.localPath}_${size}`;
+
+    try {
+      const fileData = fs.readFileSync(path);
+      const mimeType = mime.contentType(file.name);
+      res.setHeader('Content-Type', mimeType);
+      return res.status(200).send(fileData);
+    } catch (err) {
+      return res.status(404).send({ error: 'Not found' });
+    }
   }
 }
 export default FilesController;
