@@ -9,7 +9,6 @@ class DBClient {
     const url = `mongodb://${DB_HOST}:${DB_PORT}`;
     MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
       if (!err) {
-        // console.log('Connected successfully to server');
         this.db = client.db(DB_DATABASE);
         this.usersCollection = this.db.collection('users');
         this.filesCollection = this.db.collection('files');
