@@ -2,7 +2,7 @@ import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
 
 class AppController {
-  static getStatus(req, res) { /* eslint-disable no-unused-vars */
+  static async getStatus(_, res) { /* eslint-disable no-unused-vars */
     try {
       const redisStatus = redisClient.isAlive();
       const dbStatus = dbClient.isAlive();
@@ -13,7 +13,7 @@ class AppController {
     }
   }
 
-  static async getStats(req, res) { /* eslint-disable no-unused-vars */
+  static async getStats(_, res) { /* eslint-disable no-unused-vars */
     try {
       const usersCount = await dbClient.nbUsers();
       const filesCount = await dbClient.nbFiles();
