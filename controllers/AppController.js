@@ -2,7 +2,7 @@ import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
 
 class AppController {
-  static async getStatus(req, res) { /* eslint-disable no-unused-vars */
+  static getStatus(req, res) { /* eslint-disable no-unused-vars */
     try {
       const redisStatus = redisClient.isAlive();
       const dbStatus = dbClient.isAlive();
