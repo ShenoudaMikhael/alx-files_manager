@@ -34,7 +34,8 @@ class FilesController {
     if (!data && type !== 'folder') {
       return res.status(400).json({ error: 'Missing data' });
     }
-    if (parentId) {
+    const pId = parentId === '0' ? 0 : parentId;
+    if (pId !== 0) {
       const filesCollection = await dbClient.db.collection('files');
       const parentidObject = new ObjectId(parentId);
       const existingFileWithParentId = await filesCollection.findOne(
@@ -55,7 +56,7 @@ class FilesController {
           name,
           type,
           isPublic,
-          parentId,
+          pId,
         },
       );
       const id = inserted.insertedId;
@@ -66,7 +67,7 @@ class FilesController {
       const filesCollection = await dbClient.db.collection('files');
       const folderPath = process.env.FOLDER_PATH || '/tmp/files_manager';
       const uuidstr = uuidv4();
-      const parentidObject = new ObjectId(parentId);
+      const parentidObject = pId !== 0 ? new ObjectId(pId) : 0;
       const filePath = `${folderPath}/${uuidstr}`;
       const buff = Buffer.from(data, 'base64');
       try {
@@ -75,7 +76,7 @@ class FilesController {
         // already exists
       }
       try {
-        await fs.writeFile(filePath, buff, 'utf-8');
+        await fs.writeFile(filePath, buff, () => { });
       } catch (error) {
         console.log(error);
       }
