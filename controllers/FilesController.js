@@ -88,5 +88,80 @@ class FilesController {
       parentId: fileInsertData.parentId,
     });
   }
+
+  static async getShow(req, res) {
+    const userToken = req.header('X-Token');
+    if (!userToken) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const authKey = `auth_${userToken}`;
+    const userID = await redisClient.get(authKey);
+
+    if (!userID) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const user = await (await dbClient.usersCollection).findOne({ _id: ObjectId(userID) });
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const fileId = req.params.id || '';
+    const file = await (
+      await dbClient.filesCollection).findOne({ _id: ObjectId(fileId), userId: user._id });
+    if (!file) return res.status(404).send({ error: 'Not found' });
+
+    return res.status(200).send({
+      id: file._id,
+      userId: file.userId,
+      name: file.name,
+      type: file.type,
+      isPublic: file.isPublic,
+      parentId: file.parentId,
+    });
+  }
+
+  static async getIndex(req, res) {
+    const userToken = req.header('X-Token');
+    if (!userToken) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const authKey = `auth_${userToken}`;
+    const userID = await redisClient.get(authKey);
+
+    if (!userID) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const user = await (await dbClient.usersCollection).findOne({ _id: ObjectId(userID) });
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    let parentId = req.query.parentId || 0;
+    if (parentId === '0') parentId = 0;
+    if (parentId !== 0) {
+      parentId = ObjectId(parentId);
+
+      const folder = await (await dbClient.filesCollection).findOne({ _id: ObjectId(parentId) });
+      if (!folder || folder.type !== 'folder') return res.status(200).send([]);
+    }
+    const page = req.query.page || 0;
+    const matchCr = { $and: [{ parentId }] };
+    let cuurentPageData = [{ $match: matchCr }, { $skip: page * 20 }, { $limit: 20 }];
+    if (parentId === 0) cuurentPageData = [{ $skip: page * 20 }, { $limit: 20 }];
+
+    const pageFiles = await (await dbClient.filesCollection).aggregate(cuurentPageData);
+    const files = [];
+
+    await pageFiles.forEach((file) => {
+      const fileObj = {
+        id: file._id,
+        userId: file.userId,
+        name: file.name,
+        type: file.type,
+        isPublic: file.isPublic,
+        parentId: file.parentId,
+      };
+      files.push(fileObj);
+    });
+    return res.status(200).send(files);
+  }
 }
 export default FilesController;
