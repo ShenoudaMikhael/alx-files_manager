@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 import imageThumbnail from 'image-thumbnail';
 import DBClient from './utils/db';
 
-const thumbq = new Bull('thumbq');
+const thumbq = new Bull('fileQueue');
 
 const createImageThumbnail = async (path, options) => {
   try {
