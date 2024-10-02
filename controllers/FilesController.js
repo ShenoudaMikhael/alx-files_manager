@@ -80,7 +80,7 @@ class FilesController {
 
     fileInsertData.localPath = filePath;
     await (await dbClient.filesCollection).insertOne(fileInsertData);
-    const thumbQeue = new Queue('thumbQeue');
+    const thumbQeue = new Queue('fileQueue');
     thumbQeue.add({
       userId: fileInsertData.userId,
       fileId: fileInsertData._id,
@@ -267,7 +267,7 @@ class FilesController {
     const fileId = req.params.id || '';
     const size = req.query.size || 0;
 
-    const file = await dbClient.files.findOne({ _id: ObjectId(fileId) });
+    const file = await (await dbClient.filesCollection).findOne({ _id: ObjectId(fileId) });
     if (!file) return res.status(404).send({ error: 'Not found' });
 
     const { isPublic, userId, type } = file;
