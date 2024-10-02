@@ -1,3 +1,4 @@
+#!/usr/bin/node
 import express from 'express';
 import router from './routes/index';
 
