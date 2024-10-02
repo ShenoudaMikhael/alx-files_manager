@@ -20,11 +20,10 @@ class FilesController {
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-    const { name } = req.body;
-    const { type } = req.body;
-    const { data } = req.body;
-    const parentId = req.body.parentId || 0;
-    const isPublic = req.body.isPublic || false;
+    const {
+      name, type, parentId = '0', isPublic = false, data,
+    } = req.body;
+
     const allowedTypes = ['file', 'folder', 'image'];
     if (!name) {
       return res.status(400).json({ error: 'Missing name' });
@@ -36,7 +35,7 @@ class FilesController {
       return res.status(400).json({ error: 'Missing data' });
     }
     if (parentId) {
-      const filesCollection = dbClient.db.collection('files');
+      const filesCollection = await dbClient.db.collection('files');
       const parentidObject = new ObjectId(parentId);
       const existingFileWithParentId = await filesCollection.findOne(
         { _id: parentidObject, userId: user._id },
@@ -49,7 +48,7 @@ class FilesController {
       }
     }
     if (type === 'folder') {
-      const filesCollection = dbClient.db.collection('files');
+      const filesCollection = await dbClient.db.collection('files');
       const inserted = await filesCollection.insertOne(
         {
           userId: user._id,
@@ -64,7 +63,7 @@ class FilesController {
         id, userID, name, type, isPublic, parentId,
       });
     } else {
-      const filesCollection = dbClient.db.collection('files');
+      const filesCollection = await dbClient.db.collection('files');
       const folderPath = process.env.FOLDER_PATH || '/tmp/files_manager';
       const uuidstr = uuidv4();
       const parentidObject = new ObjectId(parentId);
