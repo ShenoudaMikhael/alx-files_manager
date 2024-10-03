@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
-class UsersController {
+export default class UsersController {
   static async postNew(req, res) {
     const { email, password } = req.body ? req.body : { email: null, password: null };
     if (!email) {
@@ -51,6 +51,3 @@ class UsersController {
     }
   }
 }
-
-export default UsersController;
-module.exports = UsersController;

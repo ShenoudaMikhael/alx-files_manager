@@ -5,7 +5,7 @@ import mime from 'mime-types';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
-class FilesController {
+export default class FilesController {
   static async postUpload(req, res) {
     const dir = process.env.FOLDER_PATH || '/tmp/files_manager';
 
@@ -283,4 +283,3 @@ class FilesController {
     }
   }
 }
-export default FilesController;
